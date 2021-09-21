@@ -1,4 +1,8 @@
 <?php
+/*
+@jpgtopdfrobot bot kodi
+*/
+
 $db_user = "botlar_conventer";
 $db_pass = "conventer";
 $pdo = new PDO('mysql:host=localhost;dbname=botlar_conventer;charset=utf8', $db_user, $db_pass);
