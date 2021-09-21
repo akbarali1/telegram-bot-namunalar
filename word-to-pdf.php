@@ -4,6 +4,7 @@ phpofiseni o`rnatishingiz kerak kodga qarab tushunib olarsiz
 */
 
 require __DIR__ . '/vendor/autoload.php';
+
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\Settings;
 
@@ -11,33 +12,36 @@ require '../db.php';
 define('TOKEN', '<BOT_TOKEN>');
 $data = file_get_contents('php://input');
 $data = json_decode($data, true);
- ob_start();
+ob_start();
 print_r($data);
 $out = ob_get_clean();
 file_put_contents(__DIR__ . '/post.txt', $out);
 //Kodni qisqartirmasak bo`lmas ekan
 $chat_id = $data['message']['chat']['id'];
 $user_text = $data['message']['text'];
-$username = ($data['message']['chat']['username']) ? : 'nousername';
+$username = ($data['message']['chat']['username']) ?: 'nousername';
 $message_id = $data['message']['message_id'];
-$last_name = ($data['message']['chat']['last_name']) ? : 'nolastname';
-$first_name = ($data['message']['chat']['first_name']) ? : 'nofirstname';
+$last_name = ($data['message']['chat']['last_name']) ?: 'nolastname';
+$first_name = ($data['message']['chat']['first_name']) ?: 'nofirstname';
 $birgalikda = $first_name . " " . $last_name;
 $chanel_name = '@tushuntirolmadim';
 $akbaralichanel = '@kbarali';
 $groupid = '-1001297074263';
-function reponse($massiv) {
+function reponse($massiv)
+{
     $botpost = json_decode($massiv, true);
     return $botpost;
 }
-$keyboard = json_encode(['inline_keyboard' => [[['url' => 'https://t.me/Tushuntirolmadim', 'text' => 'Chanel (Tushuntirolmadim)'], ], [['url' => 'https://t.me/convertor_group', 'text' => 'GROUP (Conventor GROUP)'], ], [['url' => 'https://t.me/kbarali', 'text' => 'Chanel (Akbarali Blog chanel)'], ], [['url' => 'https://uzhackersw.uz/', 'text' => 'Saytga kirish (ixtoyoriy)'], ], ], ]);
+
+$keyboard = json_encode(['inline_keyboard' => [[['url' => 'https://t.me/Tushuntirolmadim', 'text' => 'Chanel (Tushuntirolmadim)'],], [['url' => 'https://t.me/convertor_group', 'text' => 'GROUP (Conventor GROUP)'],], [['url' => 'https://t.me/kbarali', 'text' => 'Chanel (Akbarali Blog chanel)'],], [['url' => 'https://uzhackersw.uz/', 'text' => 'Saytga kirish (ixtoyoriy)'],],],]);
 /*
 if (!empty($user_text == "/groupid")) {
     sendTelegram('sendMessage', array('chat_id' => $chat_id, 'text' => $chat_id));
     die;
 }*/
 // Функция вызова методов API.
-function sendTelegram($method, $response) {
+function sendTelegram($method, $response)
+{
     $ch = curl_init('https://api.telegram.org/bot' . TOKEN . '/' . $method);
     curl_setopt($ch, CURLOPT_POST, 1);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $response);
@@ -47,22 +51,25 @@ function sendTelegram($method, $response) {
     curl_close($ch);
     return $res;
 }
-function botpostid($input) {
+
+function botpostid($input)
+{
     $botpost = json_decode($input, true);
     $input1 = $botpost['result']['message_id'];
     return $input1;
 }
+
 if (!empty($user_text == "/start@jpgtopdfrobot")) {
- sendTelegram('deleteMessage', array('chat_id' => $chat_id, 'message_id' => $message_id));
- exit;
+    sendTelegram('deleteMessage', array('chat_id' => $chat_id, 'message_id' => $message_id));
+    exit;
 }
 if (!empty($user_text == "/boshla@jpgtopdfrobot")) {
- sendTelegram('deleteMessage', array('chat_id' => $chat_id, 'message_id' => $message_id));
- exit;
+    sendTelegram('deleteMessage', array('chat_id' => $chat_id, 'message_id' => $message_id));
+    exit;
 }
 if (!empty($user_text == "/toxta@jpgtopdfrobot")) {
- sendTelegram('deleteMessage', array('chat_id' => $chat_id, 'message_id' => $message_id));
- exit;
+    sendTelegram('deleteMessage', array('chat_id' => $chat_id, 'message_id' => $message_id));
+    exit;
 }
 if (!empty($data['message']['new_chat_members'])) {
     $bockid = $data['message']['from']['id'];
@@ -139,23 +146,23 @@ if (!empty($data['message']['document'])) {
     curl_close($ch);
     $res = json_decode($res, true);
     if ($res['ok']) {
-        $src  = 'https://api.telegram.org/file/bot' . TOKEN . '/' . $res['result']['file_path'];
+        $src = 'https://api.telegram.org/file/bot' . TOKEN . '/' . $res['result']['file_path'];
         $pathinfo = pathinfo($src);
-		$dest = __DIR__ . '/files/' . $chat_id.'.'.$pathinfo['extension'];
-		if ($pathinfo['extension'] == 'docx' OR $pathinfo['extension'] == 'doc') {
-		    copy($src, $dest);
-		    Settings::setPdfRendererName(Settings::PDF_RENDERER_DOMPDF);
+        $dest = __DIR__ . '/files/' . $chat_id . '.' . $pathinfo['extension'];
+        if ($pathinfo['extension'] == 'docx' or $pathinfo['extension'] == 'doc') {
+            copy($src, $dest);
+            Settings::setPdfRendererName(Settings::PDF_RENDERER_DOMPDF);
             Settings::setPdfRendererPath('.');
             $phpWord = IOFactory::load($dest);
-        $tayyor =     $phpWord->save($chat_id.'.pdf', 'PDF');
-        if ($tayyor) {
-        //    sendTelegram('sendMessage', array('chat_id' => $chat_id, 'text' => $chat_id, 'parse_mode' => 'html'));
-            sendTelegram('sendDocument', array('chat_id' => $chat_id, 'document' => curl_file_create($chat_id.'.pdf')));
-            unlink($chat_id.'.pdf');
-            unlink($dest);
-        }
-		}else {
+            $tayyor = $phpWord->save($chat_id . '.pdf', 'PDF');
+            if ($tayyor) {
+                //    sendTelegram('sendMessage', array('chat_id' => $chat_id, 'text' => $chat_id, 'parse_mode' => 'html'));
+                sendTelegram('sendDocument', array('chat_id' => $chat_id, 'document' => curl_file_create($chat_id . '.pdf')));
+                unlink($chat_id . '.pdf');
+                unlink($dest);
+            }
+        } else {
             sendTelegram('sendMessage', array('chat_id' => $chat_id, 'reply_to_message_id' => $message_id, 'text' => "Faqatgina word hujjatlarga mumkun", 'parse_mode' => 'html'));
-		}
+        }
     }
 }
