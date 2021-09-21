@@ -6,4 +6,4 @@ Homiylik qilmoqchi bo'lganlar
 
 
 
-@kbarali0511 ga yozing telegramdan
+@akbarali0511 ga yozing telegramdan
