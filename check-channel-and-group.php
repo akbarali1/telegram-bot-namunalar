@@ -1,8 +1,7 @@
 <?php
 //require __DIR__ . '/vendor/autoload.php';
 define('TOKEN', '<BOT_TOKEN>');
-$data = file_get_contents('php://input');
-$data = json_decode($data, true);
+$data = json_decode(file_get_contents('php://input'), true);
 //Kodni qisqartirmasak bo`lmas ekan
 $chat_id = $data['message']['chat']['id'];
 $user_text = $data['message']['text'];
@@ -20,6 +19,7 @@ function reponse($massiv)
     return $botpost;
 }
 
+$keyboard = json_encode(['inline_keyboard' => [[['url' => 'https://t.me/Tushuntirolmadim', 'text' => 'Kanal (Tushuntirolmadim)'],], [['url' => 'https://t.me/convertor_group', 'text' => 'Guruh (Conventor GROUP)'],], [['url' => 'https://uzhackersw.uz/', 'text' => 'Saytga kirish (ixtoyoriy)'],],],]);
 // Функция вызова методов API.
 function sendTelegram($method, $response)
 {
@@ -30,7 +30,7 @@ function sendTelegram($method, $response)
     curl_setopt($ch, CURLOPT_HEADER, false);
     $res = curl_exec($ch);
     curl_close($ch);
-    return $res;
+    return json_decode($res, true);
 }
 
 function botpostid($input)
@@ -45,14 +45,17 @@ if (!empty($user_text == "/groupid")) {
     die;
 }
 if (!empty($user_text)) {
-    $chanel = reponse(sendTelegram('getChatMember', array('chat_id' => $chanel_name, 'user_id' => $chat_id)));
-    $group = reponse(sendTelegram('getChatMember', array('chat_id' => $groupid, 'user_id' => $chat_id)));
+    $chanel = sendTelegram('getChatMember', array('chat_id' => $chanel_name, 'user_id' => $chat_id));
+    $group = sendTelegram('getChatMember', array('chat_id' => $groupid, 'user_id' => $chat_id));
+    $msgText = "";
     if ($chanel['result']['status'] === 'left') {
-        sendTelegram('sendMessage', array('chat_id' => $chat_id, 'text' => 'Botdan foydalanish uchun avval kanalga azo bo`ling', 'reply_markup' => $keyboard));
-        die;
+        $msgText .= 'Botdan foydalanish uchun avval kanalga azo bo`ling' . "\n";
     }
     if ($group['result']['status'] === 'left') {
-        sendTelegram('sendMessage', array('chat_id' => $chat_id, 'text' => 'Botdan foydalanish uchun avval guruhg azo bo`ling', 'reply_markup' => $keyboard));
+        $msgText .= 'Botdan foydalanish uchun avval guruhg azo bo`ling' . "\n";
+    }
+    if (!empty($msgText)) {
+        sendTelegram('sendMessage', array('chat_id' => $chat_id, 'text' => $msgText, 'reply_markup' => $keyboard));
         die;
     }
 }
