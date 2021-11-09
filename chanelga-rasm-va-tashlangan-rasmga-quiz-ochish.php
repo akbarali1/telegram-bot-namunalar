@@ -1,8 +1,5 @@
 <?php
-/*
-Botga rasm tashlaysiz u rasmni kanalga tashlab rasm yaxshi yoki yomonligi haqida quiz tashlaydi
-*/
-define('TOKEN', '<BOT_TOKEN>');
+define('TOKEN', 'TOKEN');
 
 $chanel_name = '@asdasdasdasdawqe';
 
@@ -57,7 +54,6 @@ if (!empty($data)) {
         if (!empty($user_text == "/start")) {
             sendTelegram('sendMessage', array('chat_id' => $chat_id, 'text' => 'ishladim', 'parse_mode' => 'html'));
             $user_text;
-            //  sendTelegram('sendMessage', array('chat_id' => $chat_id, 'reply_to_message_id' => $message_id, 'text' => $lang['start'], 'parse_mode' => 'html'));
             exit();
         }
 
@@ -65,11 +61,14 @@ if (!empty($data)) {
         if (!empty($data['message']['photo'])) {
 
             $photo = array_pop($data['message']['photo']);
+
+            sleep(3);
             $res = sendTelegram('getFile', array('file_id' => $photo['file_id']));
             $res = json_decode($res, true);
             if ($res['ok']) {
                 $src = 'https://api.telegram.org/file/bot' . TOKEN . '/' . $res['result']['file_path'];
 
+                sleep(3);
                 $idxabar = botpostid(sendTelegram('sendPhoto', array(
                     'chat_id' => $chanel,
                     'caption' => "<b>Kanal: " . $chanel . "</b>",
@@ -86,12 +85,21 @@ if (!empty($data)) {
                 ]);
 
 
-                sendTelegram('sendMessage', array('chat_id' => $chat_id, 'text' => 'Rasm tashlandi https://t.me/karikaturada/' . $idxabar, 'reply_to_message_id' => $message_id, 'parse_mode' => 'html'));
-//        sendTelegram('sendMessage', array('chat_id' => $chat_id, 'text' => 'Rasm tashlandi',	'reply_to_message_id' => $message_id, 'parse_mode' => 'html'));
-                die;
+                sendTelegram('sendMessage', array('chat_id' => $chat_id, 'text' => 'Rasm tashlandi https://t.me/karikaturada/' . $idxabar,
+                    //'reply_to_message_id' => $message_id, 
+                    'parse_mode' => 'html'));
 
+                if (is_numeric($idxabar)) {
+                    sendTelegram('deleteMessage', array('chat_id' => $chat_id, 'message_id' => $message_id));
+                }else{
+                    
+                    sendTelegram('sendMessage', array('chat_id' => $chat_id, 'text' => 'Bu rasm tashlanmay qooldi',
+                    'reply_to_message_id' => $message_id,  'parse_mode' => 'html'));
+                }
+                die;
             }
         }
+
         $idxabar = botpostid(sendTelegram('sendPhoto', array(
             'chat_id' => $chanel,
             'caption' => "<b>Kanal: " . $chanel . "</b>",
