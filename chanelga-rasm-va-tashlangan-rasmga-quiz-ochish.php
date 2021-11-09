@@ -1,5 +1,8 @@
 <?php
-define('TOKEN', 'TOKEN');
+/*
+Botga rasm tashlaysiz u rasmni kanalga tashlab rasm yaxshi yoki yomonligi haqida quiz tashlaydi
+*/
+define('TOKEN', '<BOT_TOKEN>');
 
 $chanel_name = '@asdasdasdasdawqe';
 
