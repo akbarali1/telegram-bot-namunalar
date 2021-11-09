@@ -3,9 +3,7 @@
 Botga rasm tashlaysiz u rasmni kanalga tashlab rasm yaxshi yoki yomonligi haqida quiz tashlaydi
 */
 define('TOKEN', '<BOT_TOKEN>');
-
 $chanel_name = '@asdasdasdasdawqe';
-
 $chanel = '@Karikaturada';
 
 // Функция вызова методов API.
